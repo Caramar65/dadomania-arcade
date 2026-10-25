@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DadoManía • Arcade & Casino de Juegos de Dados</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>">
+</head>
+<body>
+
+  <!-- Top Navigation & Header -->
+  <header>
+    <div class="logo-area">
+      <div class="logo-icon">🎲</div>
+      <div class="logo-text">
+        <h1>DadoManía</h1>
+        <span>Arcade de Dados Interactivo</span>
+      </div>
+    </div>
+
+    <nav class="nav-tabs">
+      <button class="nav-btn active" data-game="yahtzee">
+        <span>🎲</span> Generala
+      </button>
+      <button class="nav-btn" data-game="farkle">
+        <span>🔥</span> Farkle (10.000)
+      </button>
+      <button class="nav-btn" data-game="craps">
+        <span>🎰</span> Craps Casino
+      </button>
+      <button class="nav-btn" data-game="pig">
+        <span>🐷</span> Duelo (Pig)
+      </button>
+    </nav>
+
+    <div class="nav-actions">
+      <!-- Dice skin customizer -->
+      <select id="skin-selector" class="select-control" title="Diseño de los Dados">
+        <option value="skin-casino-red">🔴 Rojo Casino</option>
+        <option value="skin-neon-cyber">⚡ Neón Cyber</option>
+        <option value="skin-gold-luxury">👑 Oro Metálico</option>
+        <option value="skin-ivory">⚪ Marfil Clásico</option>
+        <option value="skin-obsidian">⚫ Obsidiana</option>
+      </select>
+
+      <button id="sound-toggle-btn" class="icon-btn" title="Alternar Sonido">🔊</button>
+      <button id="rules-btn" class="icon-btn" title="Ver Reglas del Juego">📜</button>
+      <button id="stats-btn" class="icon-btn" title="Estadísticas y Récords">🏆</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================================== -->
+    <!-- VIEW 1: GENERALA / YAHTZEE                     -->
+    <!-- ============================================== -->
+    <section id="view-yahtzee" class="game-view active">
+      <div class="game-header-bar">
+        <div class="game-info-badge">
+          <h2>🎲 Generala / Yahtzee</h2>
+          <p>Consigue la mejor puntuación rellenando las 13 categorías en 3 tiradas por turno.</p>
+        </div>
+
+        <div class="game-controls-bar">
+          <label style="font-size:0.85rem; color:var(--text-secondary);">Modo:</label>
+          <select class="select-control" id="yahtzee-mode-select" onchange="window.yahtzee.setMode(this.value)">
+            <option value="solo" selected>👤 1 Jugador (Solitario)</option>
+            <option value="vs-ai">🤖 Vs Rival IA</option>
+            <option value="pvp">👥 2 Jugadores (Pasa y Juega)</option>
+          </select>
+          <button class="btn-secondary" onclick="window.yahtzee.restartGame()">
+            🔄 Reiniciar
+          </button>
+        </div>
+      </div>
+
+      <div class="yahtzee-layout" style="margin-top: 20px;">
+        <!-- Left: Dice Arena -->
+        <div>
+          <div class="dice-arena">
+            <div class="arena-watermark">GENERALA</div>
+
+            <div class="status-pill" style="margin-bottom: 15px;">
+              <div class="indicator"></div>
+              <div id="yahtzee-status-text">Tiradas restantes: <strong>3</strong> / 3</div>
+            </div>
+
+            <!-- 5 3D Dice Container -->
+            <div class="dice-container" id="yahtzee-dice-container"></div>
+
+            <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:8px;">
+              💡 <em>Haz clic en cualquier dado después de tirar para Guardarlo o Liberarlo.</em>
+            </p>
+
+            <div class="arena-actions">
+              <button id="yahtzee-roll-btn" class="btn-primary">
+                🎲 Lanzar Dados (3)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Scorecard Table -->
+        <div class="scorecard-card">
+          <div class="scorecard-header">
+            <h3>Hoja de Puntuación</h3>
+            <span style="font-size:0.8rem; color:var(--accent-cyan); font-weight:600;">Haz clic para anotar</span>
+          </div>
+
+          <table class="score-table">
+            <thead>
+              <tr id="yahtzee-table-header" style="color:var(--text-secondary); font-size:0.8rem; text-align:left;">
+                <th>Categoría</th>
+                <th>P1</th>
+                <th id="yahtzee-p2-col">Rival</th>
+              </tr>
+            </thead>
+            <tbody id="yahtzee-score-table-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 2: FARKLE (10,000)                        -->
+    <!-- ============================================== -->
+    <section id="view-farkle" class="game-view">
+      <div class="game-header-bar">
+        <div class="game-info-badge">
+          <h2>🔥 Farkle (10.000)</h2>
+          <p>Lanza 6 dados, arriesga o asegúrate. Si no sacas ningún punto en la tirada: ¡Farkle!</p>
+        </div>
+
+        <div class="game-controls-bar">
+          <label style="font-size:0.85rem; color:var(--text-secondary);">Modo:</label>
+          <select class="select-control" onchange="window.farkle.setMode(this.value)">
+            <option value="vs-ai" selected>🤖 Vs Rival IA</option>
+            <option value="solo">👤 Solitario (High Score)</option>
+            <option value="pvp">👥 2 Jugadores (Local)</option>
+          </select>
+          <label style="font-size:0.85rem; color:var(--text-secondary); margin-left:8px;">Meta:</label>
+          <select class="select-control" onchange="window.farkle.setTarget(Number(this.value))">
+            <option value="5000" selected>⚡ Rápido (5.000 pts)</option>
+            <option value="10000">🏆 Clásico (10.000 pts)</option>
+          </select>
+          <button class="btn-secondary" onclick="window.farkle.restartGame()">
+            🔄 Reiniciar
+          </button>
+        </div>
+      </div>
+
+      <div class="dice-arena" style="margin-top: 20px;">
+        <div class="arena-watermark">FARKLE</div>
+
+        <div id="farkle-alert" class="farkle-banner" style="display:none;"></div>
+
+        <div class="status-pill" style="margin-bottom: 12px;">
+          <div class="indicator"></div>
+          <div id="farkle-status-text">Tu Turno • Meta: <strong>5000</strong> pts</div>
+        </div>
+
+        <!-- 6 3D Dice Container -->
+        <div class="dice-container" id="farkle-dice-container"></div>
+
+        <div style="display:flex; align-items:center; gap:16px; margin-top:10px;">
+          <span style="font-size:0.9rem; color:var(--text-secondary);">Selección actual:</span>
+          <strong id="farkle-selection-score" style="font-size:1.1rem; color:var(--accent-green);">+0 pts</strong>
+        </div>
+
+        <div class="arena-actions">
+          <button id="farkle-roll-btn" class="btn-primary">
+            🎲 Tirar Dados Libres
+          </button>
+          <button id="farkle-bank-btn" class="btn-secondary btn-success" disabled>
+            💰 Guardar en Banco
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats Dashboards -->
+      <div class="farkle-dashboard">
+        <div class="farkle-stat-box active-turn" id="farkle-p1-card">
+          <div class="stat-icon">👤</div>
+          <div class="farkle-stat-info">
+            <h4>Jugador 1</h4>
+            <div class="stat-value" id="farkle-p1-score">0</div>
+          </div>
+        </div>
+
+        <div class="farkle-stat-box" id="farkle-p2-card">
+          <div class="stat-icon">🤖</div>
+          <div class="farkle-stat-info">
+            <h4>Rival IA</h4>
+            <div class="stat-value" id="farkle-p2-score">0</div>
+          </div>
+        </div>
+
+        <div class="farkle-stat-box" style="border-color: rgba(245, 176, 65, 0.4);">
+          <div class="stat-icon" style="color:var(--gold);">🏦</div>
+          <div class="farkle-stat-info">
+            <h4>Acumulado en Turno</h4>
+            <div class="stat-value" id="farkle-turn-bank" style="color:var(--gold);">+0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="farkle-combos-hint" style="margin-top: 15px;">
+        <strong>💡 Combinaciones de puntos:</strong>
+        <span class="combo-pill">Dado 1 = 100</span>
+        <span class="combo-pill">Dado 5 = 50</span>
+        <span class="combo-pill">3 Ases = 1.000</span>
+        <span class="combo-pill">3 Seises = 600</span>
+        <span class="combo-pill">3 Cincos = 500</span>
+        <span class="combo-pill">3 Cuatros = 400</span>
+        <span class="combo-pill">3 Treses = 300</span>
+        <span class="combo-pill">3 Doses = 200</span>
+        <span class="combo-pill">Escalera 1-6 = 1.500</span>
+        <span class="combo-pill">3 Parejas = 1.500</span>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 3: CRAPS (CASINO)                         -->
+    <!-- ============================================== -->
+    <section id="view-craps" class="game-view">
+      <div class="game-header-bar">
+        <div class="game-info-badge">
+          <h2>🎰 Craps • Pase Inglés de Casino</h2>
+          <p>Haz tus apuestas en el tapete de fieltro y lanza los dos dados para desafiar a la banca.</p>
+        </div>
+
+        <div class="game-controls-bar">
+          <div class="status-pill" style="border-color: rgba(245,176,65,0.4);">
+            <span>Banca:</span>
+            <strong id="craps-bankroll-val" style="color:var(--gold); font-size:1.15rem;">$1000</strong>
+          </div>
+          <div class="status-pill">
+            <span>En Mesa:</span>
+            <strong id="craps-total-bet-val" style="color:var(--accent-cyan);">$0</strong>
+          </div>
+          <button class="btn-secondary" onclick="window.craps.reloadChips(500)">
+            💵 Pedir $500
+          </button>
+          <button class="btn-secondary" onclick="window.craps.restartGame()">
+            🔄 Reiniciar
+          </button>
+        </div>
+      </div>
+
+      <div class="craps-table-layout" style="margin-top: 20px;">
+        <!-- Felt Roll Arena -->
+        <div class="dice-arena">
+          <div class="arena-watermark">CRAPS</div>
+
+          <div style="display:flex; align-items:center; gap:16px; margin-bottom:12px; z-index:2;">
+            <div id="craps-point-puck" class="point-indicator">SALIDA (OFF)</div>
+            <div id="craps-last-sum" style="font-weight:700; color:var(--text-secondary);"></div>
+          </div>
+
+          <div class="dice-container" id="craps-dice-container"></div>
+
+          <div class="arena-actions">
+            <button id="craps-roll-btn" class="btn-primary">
+              🎲 Lanzar Dados de Casino
+            </button>
+            <button id="craps-clear-btn" class="btn-secondary btn-danger" onclick="window.craps.clearAllBets()">
+              🧹 Limpiar Apuestas
+            </button>
+          </div>
+        </div>
+
+        <!-- Casino Chip selector -->
+        <div class="chips-selector">
+          <span style="font-weight:700; font-size:0.9rem; color:var(--text-secondary); margin-right:8px;">Ficha:</span>
+          <div class="poker-chip chip-5" data-val="5">$5</div>
+          <div class="poker-chip chip-25 active" data-val="25">$25</div>
+          <div class="poker-chip chip-50" data-val="50">$50</div>
+          <div class="poker-chip chip-100" data-val="100">$100</div>
+          <div class="poker-chip chip-500" data-val="500">$500</div>
+        </div>
+
+        <!-- Betting Grid Board -->
+        <div class="craps-board" id="craps-bets-grid">
+          <!-- Dynamically populated bet boxes -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 4: PIG / DUELO DE DADOS                   -->
+    <!-- ============================================== -->
+    <section id="view-pig" class="game-view">
+      <div class="game-header-bar">
+        <div class="game-info-badge">
+          <h2>🐷 Duelo de Dados (Pig / El Cerdo)</h2>
+          <p>Tira el dado acumulando puntos. ¡Si sacas un 1, pierdes todo lo del turno!</p>
+        </div>
+
+        <div class="game-controls-bar">
+          <label style="font-size:0.85rem; color:var(--text-secondary);">Rival:</label>
+          <select class="select-control" onchange="window.pig.setMode(this.value)">
+            <option value="vs-ai" selected>🤖 Vs Rival IA</option>
+            <option value="pvp">👥 2 Jugadores (Local)</option>
+          </select>
+          <label style="font-size:0.85rem; color:var(--text-secondary); margin-left:8px;">Meta:</label>
+          <select class="select-control" onchange="window.pig.setTarget(Number(this.value))">
+            <option value="50">50 Puntos (Relámpago)</option>
+            <option value="100" selected>100 Puntos (Estándar)</option>
+          </select>
+          <button class="btn-secondary" onclick="window.pig.restartGame()">
+            🔄 Reiniciar
+          </button>
+        </div>
+      </div>
+
+      <div class="pig-battle-board">
+        <!-- Player 1 Card -->
+        <div class="pig-player-card active-turn" id="pig-p1-card">
+          <div class="avatar">👤</div>
+          <h3>Jugador 1</h3>
+          <div class="big-score" id="pig-p1-score">0</div>
+          <div class="round-score-box" id="pig-p1-round">+0 en juego</div>
+          <div class="pig-progress-bar">
+            <div class="pig-progress-fill" id="pig-p1-progress"></div>
+          </div>
+        </div>
+
+        <!-- Player 2 / AI Card -->
+        <div class="pig-player-card" id="pig-p2-card">
+          <div class="avatar">🤖</div>
+          <h3 id="pig-p2-name">Rival IA</h3>
+          <div class="big-score" id="pig-p2-score">0</div>
+          <div class="round-score-box" id="pig-p2-round">+0 en juego</div>
+          <div class="pig-progress-bar">
+            <div class="pig-progress-fill" id="pig-p2-progress"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dice-arena" style="margin-top: 20px;">
+        <div class="arena-watermark">DUELO</div>
+
+        <div class="dice-container" id="pig-dice-container"></div>
+
+        <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:10px;">
+          ⚠️ <em>Saca del 2 al 6 para sumar. ¡Si sale 1 pierdes los puntos no guardados!</em>
+        </p>
+
+        <div class="arena-actions">
+          <button id="pig-roll-btn" class="btn-primary">
+            🎲 Lanzar Dado
+          </button>
+          <button id="pig-hold-btn" class="btn-secondary btn-success" disabled>
+            📥 Guardar y Pasar Turno
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal Dialog -->
+  <div id="app-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Título</h2>
+        <button id="modal-close-btn" class="close-btn">&times;</button>
+      </div>
+      <div id="modal-body">
+        <!-- Content inserted dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Canvas for Confetti -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Application Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/dice3d.js"></script>
+  <script src="js/games/yahtzee.js"></script>
+  <script src="js/games/farkle.js"></script>
+  <script src="js/games/craps.js"></script>
+  <script src="js/games/pig.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

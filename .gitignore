@@ -1,0 +1,10 @@
+# Logs
+*.log
+
+# Antigravity & AI Brain
+.gemini/
+.system_generated/
+
+# OS files
+.DS_Store
+Thumbs.db
