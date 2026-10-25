@@ -55,6 +55,38 @@ No requiere instalar nada ni usar Node.js:
   - Sonidos sintetizados en tiempo real para el choque de dados, deslizamiento en tapete, tintineo de fichas, fanfarrias de victoria y alarmas cómicas de fallo.
   - 100% autónomo (no depende de archivos de audio externos que puedan fallar al cargar).
 - **🤖 Inteligencia Artificial:** Rivals programados con algoritmos heurísticos para evaluar riesgos y seleccionar combinaciones óptimas.
-- **🏆 Récords y Estadísticas:** Guarda automáticamente tus puntuaciones máximas, victorias y banca en `localStorage`.
+- **🏆 Récords y Estadísticas:** Guarda automáticamente tus puntuaciones máximas, victorias y banca en `localStorage` y en la nube con **Supabase Leaderboard**.
 - **🎊 Sistema de Partículas:** Lluvia de confeti en Canvas en victorias y celebraciones.
 - **📜 Reglamento Integrado:** Modal interactivo con reglas detalladas y ejemplos para cada juego.
+
+---
+
+## ☁️ Integración con Supabase (Récords Mundiales)
+
+Para habilitar la tabla de récords mundiales en tiempo real:
+
+1. Ve a tu proyecto de Supabase en [supabase.com](https://supabase.com/dashboard/project/nejbmejcmztdklgwfelu).
+2. Entra en el **SQL Editor** y ejecuta:
+```sql
+CREATE TABLE IF NOT EXISTS public.leaderboard (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  player_name TEXT NOT NULL,
+  game_type TEXT NOT NULL,
+  score INTEGER NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.leaderboard ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public Read Leaderboard" ON public.leaderboard FOR SELECT USING (true);
+CREATE POLICY "Public Insert Leaderboard" ON public.leaderboard FOR INSERT WITH CHECK (true);
+```
+3. En el juego, abre **Récords 🏆 > 🌐 Récords Mundiales** e introduce tu clave pública `anon` (la que empieza con `eyJ...` que obtienes en *Project Settings > API*).
+
+---
+
+## ⚡ Despliegue en Vercel
+
+1. Entra a [vercel.com/new](https://vercel.com/new).
+2. Selecciona e importa el repositorio `Caramar65/dadomania-arcade`.
+3. Haz clic en **Deploy**. ¡Tu juego estará en línea con dominio HTTPS y actualizaciones automáticas en cada push!
