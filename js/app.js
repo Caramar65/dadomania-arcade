@@ -218,36 +218,162 @@ class App {
     this.showModal(title, body);
   }
 
-  showStatsModal() {
+  showStatsModal(activeTab = 'local') {
     const s = this.stats;
-    const body = `
-      <div class="stats-grid">
-        <div class="stat-tile">
-          <div class="num">${s.gamesPlayed}</div>
-          <div class="label">Partidas Jugadas</div>
-        </div>
-        <div class="stat-tile">
-          <div class="num">${s.yahtzeeHigh}</div>
-          <div class="label">Récord Generala</div>
-        </div>
-        <div class="stat-tile">
-          <div class="num">${s.farkleHigh}</div>
-          <div class="label">Récord Farkle</div>
-        </div>
-        <div class="stat-tile">
-          <div class="num">${s.pigWins}</div>
-          <div class="label">Victorias Duelo</div>
-        </div>
-        <div class="stat-tile">
-          <div class="num">$${window.craps ? window.craps.bankroll : 1000}</div>
-          <div class="label">Banca Casino Craps</div>
-        </div>
-      </div>
-      <div style="text-align:center; margin-top:20px;">
-        <button class="btn-secondary" onclick="window.app.resetStats(); window.app.closeModal();">Restablecer Estadísticas</button>
+    let body = `
+      <div style="display:flex; justify-content:center; gap:10px; margin-bottom:18px;">
+        <button class="nav-btn ${activeTab === 'local' ? 'active' : ''}" onclick="window.app.showStatsModal('local')">
+          🏠 Mis Récords Locales
+        </button>
+        <button class="nav-btn ${activeTab === 'cloud' ? 'active' : ''}" onclick="window.app.showStatsModal('cloud')">
+          🌐 Récords Mundiales (Supabase)
+        </button>
       </div>
     `;
+
+    if (activeTab === 'local') {
+      body += `
+        <div class="stats-grid">
+          <div class="stat-tile">
+            <div class="num">${s.gamesPlayed}</div>
+            <div class="label">Partidas Jugadas</div>
+          </div>
+          <div class="stat-tile">
+            <div class="num">${s.yahtzeeHigh}</div>
+            <div class="label">Récord Generala</div>
+          </div>
+          <div class="stat-tile">
+            <div class="num">${s.farkleHigh}</div>
+            <div class="label">Récord Farkle</div>
+          </div>
+          <div class="stat-tile">
+            <div class="num">${s.pigWins}</div>
+            <div class="label">Victorias Duelo</div>
+          </div>
+          <div class="stat-tile">
+            <div class="num">$${window.craps ? window.craps.bankroll : 1000}</div>
+            <div class="label">Banca Casino Craps</div>
+          </div>
+        </div>
+        <div style="text-align:center; margin-top:20px;">
+          <button class="btn-secondary" onclick="window.app.resetStats(); window.app.closeModal();">Restablecer Estadísticas Locales</button>
+        </div>
+      `;
+    } else {
+      body += `
+        <div id="cloud-leaderboard-container">
+          <div style="text-align:center; padding:20px; color:var(--text-secondary);">
+            Cargando récords mundiales desde Supabase... ⏳
+          </div>
+        </div>
+      `;
+    }
+
     this.showModal('🏆 Estadísticas y Récords', body);
+
+    if (activeTab === 'cloud') {
+      this.loadCloudLeaderboard();
+    }
+  }
+
+  async loadCloudLeaderboard() {
+    const container = document.getElementById('cloud-leaderboard-container');
+    if (!container) return;
+
+    if (!window.supabaseService) {
+      container.innerHTML = '<p style="text-align:center; color:var(--accent-red);">Servicio Supabase no inicializado.</p>';
+      return;
+    }
+
+    if (!window.supabaseService.key) {
+      container.innerHTML = `
+        <div style="text-align:center; padding:15px; background:rgba(0,0,0,0.25); border-radius:12px;">
+          <h3 style="color:var(--gold); margin-bottom:8px;">☁️ Conectar con Supabase</h3>
+          <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:12px;">
+            Ingresa tu clave pública <code>anon</code> (la que inicia con <code>eyJ...</code> de Project Settings &gt; API) para sincronizar puntuaciones en la nube:
+          </p>
+          <input type="password" id="input-supabase-key" placeholder="Pega tu clave anon (eyJ...)" style="width:100%; padding:10px; border-radius:8px; border:1px solid #444; background:#1e1e24; color:#fff; font-size:0.85rem; margin-bottom:12px; box-sizing:border-box;">
+          <button class="btn-primary" style="width:100%;" onclick="
+            const val = document.getElementById('input-supabase-key').value;
+            if (val) {
+              window.supabaseService.setAnonKey(val);
+              window.app.showToast('¡Clave Supabase configurada!', 'success');
+              window.app.showStatsModal('cloud');
+            }
+          ">💾 Guardar y Conectar</button>
+        </div>
+      `;
+      return;
+    }
+
+    const scores = await window.supabaseService.getTopScores(null, 15);
+    if (!scores || scores.length === 0) {
+      container.innerHTML = `
+        <div style="text-align:center; padding:20px;">
+          <p style="color:var(--text-secondary); margin-bottom:12px;">Aún no hay puntuaciones registradas en la tabla <code>leaderboard</code> de Supabase.</p>
+          <div style="background:rgba(0,0,0,0.3); padding:14px; border-radius:12px; font-size:0.85rem; color:var(--gold);">
+            💡 ¡Completa una partida para subir tu récord con tu nombre a Supabase!
+          </div>
+          <div style="text-align:center; margin-top:14px; font-size:0.75rem; color:var(--text-secondary);">
+            Supabase Conectado • <a href=\"#\" style=\"color:var(--gold); text-decoration:underline;\" onclick=\"localStorage.removeItem('dadomania_supabase_anon_key'); window.supabaseService.key = ''; window.app.showStatsModal('cloud'); return false;\">Cambiar clave API</a>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    let listHtml = `
+      <table class="score-table" style="margin-top:10px;">
+        <thead>
+          <tr style="color:var(--gold); font-size:0.85rem;">
+            <th>#</th>
+            <th>Jugador</th>
+            <th>Juego</th>
+            <th style="text-align:right;">Puntuación</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    scores.forEach((row, idx) => {
+      let medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`;
+      let gameName = row.game_type === 'yahtzee' ? '🎲 Generala' :
+                     row.game_type === 'farkle' ? '🔥 Farkle' :
+                     row.game_type === 'craps' ? '🎰 Craps' : '🐷 Duelo';
+
+      listHtml += `
+        <tr>
+          <td><strong>${medal}</strong></td>
+          <td><strong>${row.player_name || 'Anónimo'}</strong></td>
+          <td>${gameName}</td>
+          <td style="text-align:right; font-weight:800; color:var(--accent-green);">${row.score} pts</td>
+        </tr>
+      `;
+    });
+
+    listHtml += `</tbody></table>`;
+    listHtml += `
+      <div style="text-align:center; margin-top:14px; font-size:0.75rem; color:var(--text-secondary);">
+        Supabase Conectado • <a href="#" style="color:var(--gold); text-decoration:underline;" onclick="localStorage.removeItem('dadomania_supabase_anon_key'); window.supabaseService.key = ''; window.app.showStatsModal('cloud'); return false;">Cambiar clave API</a>
+      </div>
+    `;
+    container.innerHTML = listHtml;
+  }
+
+  async uploadScoreToCloud(gameType, score) {
+    const input = document.getElementById('player-cloud-name');
+    const name = input ? input.value.trim() : 'Jugador';
+    const finalName = name || 'Jugador';
+
+    this.showToast('Subiendo récord a Supabase... ☁️', 'info');
+    const res = await window.supabaseService.submitScore(finalName, gameType, score);
+
+    if (res.error) {
+      this.showToast(`Error al subir a la nube: ${res.error}`, 'error');
+    } else {
+      this.showToast('🎉 ¡Tu récord fue publicado con éxito en Supabase!', 'success');
+      this.showStatsModal('cloud');
+    }
   }
 
   recordGameStat(gameType, score) {

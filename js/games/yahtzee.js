@@ -504,7 +504,7 @@ class YahtzeeGame {
 
   endGame() {
     const p1Total = this.calculateTotals(0).grandTotal;
-    let msg = `¡Partida finalizada! Puntuación final: ${p1Total} pts.`;
+    let msg = `¡Partida finalizada! Puntuación final: <strong>${p1Total} pts</strong>.`;
 
     if (this.gameMode !== 'solo') {
       const p2Total = this.calculateTotals(1).grandTotal;
@@ -520,7 +520,25 @@ class YahtzeeGame {
     window.soundEngine.playVictory();
     window.app.triggerConfetti();
     window.app.recordGameStat('yahtzee', p1Total);
-    window.app.showModal('¡Fin de la Partida!', `<p style="font-size:1.2rem; text-align:center;">${msg}</p>`);
+
+    const cloudPrompt = `
+      <div style="margin-top:18px; background:rgba(0,0,0,0.4); padding:16px; border-radius:12px; text-align:center;">
+        <p style="font-size:0.9rem; color:var(--accent-cyan); font-weight:700; margin-bottom:10px;">
+          🌐 ¿Publicar tu puntuación en el Récord Mundial de Supabase?
+        </p>
+        <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+          <input type="text" id="player-cloud-name" placeholder="Tu Nombre o Apodo" style="background:#0e1724; border:1px solid rgba(255,255,255,0.2); color:#fff; padding:8px 14px; border-radius:8px; font-size:0.9rem; outline:none; max-width:200px;">
+          <button class="btn-primary" style="padding:8px 18px; font-size:0.9rem;" onclick="window.app.uploadScoreToCloud('yahtzee', ${p1Total})">Subir Récord 🚀</button>
+        </div>
+      </div>
+    `;
+
+    window.app.showModal('¡Fin de la Partida!', `
+      <div style="text-align:center;">
+        <p style="font-size:1.2rem; margin-bottom:10px;">${msg}</p>
+        ${cloudPrompt}
+      </div>
+    `);
   }
 }
 

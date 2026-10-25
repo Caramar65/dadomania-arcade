@@ -238,14 +238,29 @@ class PigGame {
 
   endGame() {
     const winner = this.activePlayer === 0 ? '¡Has ganado la partida de Duelo!' : (this.gameMode === 'vs-ai' ? '¡El Rival IA ha alcanzado la meta!' : '¡Jugador 2 ha ganado!');
+    const finalScore = this.scores[this.activePlayer];
     window.soundEngine.playVictory();
     window.app.triggerConfetti();
     window.app.recordGameStat('pig', this.scores[0]);
+
+    const cloudPrompt = `
+      <div style="margin-top:18px; background:rgba(0,0,0,0.4); padding:16px; border-radius:12px; text-align:center;">
+        <p style="font-size:0.9rem; color:var(--accent-cyan); font-weight:700; margin-bottom:10px;">
+          🌐 ¿Publicar tu puntuación (${finalScore} pts) en el Récord Mundial de Supabase?
+        </p>
+        <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+          <input type="text" id="player-cloud-name" placeholder="Tu Nombre o Apodo" style="background:#0e1724; border:1px solid rgba(255,255,255,0.2); color:#fff; padding:8px 14px; border-radius:8px; font-size:0.9rem; outline:none; max-width:200px;">
+          <button class="btn-primary" style="padding:8px 18px; font-size:0.9rem;" onclick="window.app.uploadScoreToCloud('pig', ${finalScore})">Subir Récord 🚀</button>
+        </div>
+      </div>
+    `;
+
     window.app.showModal('¡Victoria en Duelo de Dados!', `
       <div style="text-align:center; padding:15px;">
         <div style="font-size:3.5rem;">👑</div>
         <h3 style="color:var(--gold); font-size:1.8rem; margin:10px 0;">${winner}</h3>
         <p style="font-size:1.1rem; color:var(--text-secondary);">Marcador: ${this.scores[0]} a ${this.scores[1]} pts (Meta: ${this.targetScore})</p>
+        ${cloudPrompt}
       </div>
     `);
   }

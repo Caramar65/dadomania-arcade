@@ -567,13 +567,28 @@ class FarkleGame {
 
   endGame() {
     const winnerName = this.activePlayer === 0 ? '¡Tú has ganado!' : (this.gameMode === 'vs-ai' ? '¡El Rival IA ha ganado!' : '¡Jugador 2 ha ganado!');
+    const finalScore = this.totalScores[this.activePlayer];
     window.soundEngine.playVictory();
     window.app.triggerConfetti();
     window.app.recordGameStat('farkle', this.totalScores[0]);
+
+    const cloudPrompt = `
+      <div style="margin-top:18px; background:rgba(0,0,0,0.4); padding:16px; border-radius:12px; text-align:center;">
+        <p style="font-size:0.9rem; color:var(--accent-cyan); font-weight:700; margin-bottom:10px;">
+          🌐 ¿Publicar tu puntuación (${finalScore} pts) en el Récord Mundial de Supabase?
+        </p>
+        <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+          <input type="text" id="player-cloud-name" placeholder="Tu Nombre o Apodo" style="background:#0e1724; border:1px solid rgba(255,255,255,0.2); color:#fff; padding:8px 14px; border-radius:8px; font-size:0.9rem; outline:none; max-width:200px;">
+          <button class="btn-primary" style="padding:8px 18px; font-size:0.9rem;" onclick="window.app.uploadScoreToCloud('farkle', ${finalScore})">Subir Récord 🚀</button>
+        </div>
+      </div>
+    `;
+
     window.app.showModal('¡Victoria en Farkle!', `
       <div style="text-align:center; padding:15px;">
         <h3 style="color:var(--gold); font-size:1.8rem; margin-bottom:10px;">${winnerName}</h3>
         <p style="font-size:1.1rem; color:var(--text-secondary);">Marcador Final: ${this.totalScores[0]} vs ${this.totalScores[1]} puntos.</p>
+        ${cloudPrompt}
       </div>
     `);
   }
