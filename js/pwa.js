@@ -16,9 +16,19 @@ class PWAManager {
   registerServiceWorker() {
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
+        navigator.serviceWorker.register('/sw.js')
           .then((reg) => {
             console.log('DadoManía PWA Service Worker activo:', reg.scope);
+            reg.onupdatefound = () => {
+              const installingWorker = reg.installing;
+              if (installingWorker) {
+                installingWorker.onstatechange = () => {
+                  if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    console.log('Nueva versión de DadoManía descargada en segundo plano.');
+                  }
+                };
+              }
+            };
           })
           .catch((err) => {
             console.warn('Error registrando Service Worker:', err);
