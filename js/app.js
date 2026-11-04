@@ -135,6 +135,10 @@ class App {
     }
   }
 
+  toggleCurrentGameGuide() {
+    this.toggleGuide(this.currentGame || 'yahtzee');
+  }
+
   showRulesModal(activeGame = 'yahtzee') {
     const title = '📜 Manual Oficial & Guía de Juegos';
     

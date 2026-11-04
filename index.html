@@ -86,7 +86,7 @@
             <option value="vs-ai">🤖 Vs Rival IA</option>
             <option value="pvp">👥 2 Jugadores (Pasa y Juega)</option>
           </select>
-          <button class="btn-secondary" onclick="window.app.toggleGuide('yahtzee')">
+          <button class="btn-secondary guide-top-btn" onclick="window.app.toggleGuide('yahtzee')">
             📖 Instrucciones ▾
           </button>
           <button class="btn-secondary" onclick="window.yahtzee.restartGame()">
@@ -210,7 +210,7 @@
             <option value="5000" selected>⚡ Rápido (5.000 pts)</option>
             <option value="10000">🏆 Clásico (10.000 pts)</option>
           </select>
-          <button class="btn-secondary" onclick="window.app.toggleGuide('farkle')">
+          <button class="btn-secondary guide-top-btn" onclick="window.app.toggleGuide('farkle')">
             📖 Instrucciones ▾
           </button>
           <button class="btn-secondary" onclick="window.farkle.restartGame()">
@@ -358,7 +358,7 @@
           <button class="btn-secondary" onclick="window.craps.reloadChips(500)">
             💵 Pedir $500
           </button>
-          <button class="btn-secondary" onclick="window.app.toggleGuide('craps')">
+          <button class="btn-secondary guide-top-btn" onclick="window.app.toggleGuide('craps')">
             📖 Instrucciones ▾
           </button>
           <button class="btn-secondary" onclick="window.craps.restartGame()">
@@ -482,7 +482,7 @@
             <option value="50">50 Puntos (Relámpago)</option>
             <option value="100" selected>100 Puntos (Estándar)</option>
           </select>
-          <button class="btn-secondary" onclick="window.app.toggleGuide('pig')">
+          <button class="btn-secondary guide-top-btn" onclick="window.app.toggleGuide('pig')">
             📖 Instrucciones ▾
           </button>
           <button class="btn-secondary" onclick="window.pig.restartGame()">
@@ -579,6 +579,11 @@
       </div>
     </section>
   </main>
+
+  <!-- Floating Mobile Guide Button (Zero-overhead on mobile screen) -->
+  <button class="mobile-guide-fab" onclick="window.app.toggleCurrentGameGuide()" aria-label="Ver Instrucciones del Juego" title="Ver Reglas e Instrucciones">
+    📖 <span class="fab-label">Reglas</span>
+  </button>
 
   <!-- Modal Dialog -->
   <div id="app-modal" class="modal-overlay">

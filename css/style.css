@@ -1577,6 +1577,11 @@ main {
   color: #fff;
 }
 
+/* Mobile Floating Guide Button */
+.mobile-guide-fab {
+  display: none;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   header {
@@ -1597,6 +1602,62 @@ main {
   main {
     padding: 12px;
   }
+
+  /* Compact top game header bar on mobile so 3D dice are immediately front & center */
+  .game-header-bar {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  .game-info-badge h2 {
+    font-size: 1.15rem;
+  }
+  .game-info-badge p {
+    display: none; /* Hide multi-line description on mobile to save vertical height */
+  }
+  .game-controls-bar {
+    gap: 6px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .game-controls-bar .select-control {
+    padding: 6px 8px;
+    font-size: 0.78rem;
+  }
+  .game-controls-bar .btn-secondary {
+    padding: 6px 12px;
+    font-size: 0.82rem;
+  }
+
+  /* Hide bulky top instructions button on mobile to save vertical space */
+  .guide-top-btn {
+    display: none !important;
+  }
+
+  /* Sleek floating action button at bottom-right on mobile (takes 0 vertical space at the top) */
+  .mobile-guide-fab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    position: fixed;
+    bottom: 22px;
+    right: 18px;
+    background: rgba(14, 27, 47, 0.94);
+    backdrop-filter: blur(12px);
+    border: 1.5px solid var(--gold);
+    color: var(--gold);
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 0 16px rgba(245, 176, 65, 0.35);
+    z-index: 950;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .mobile-guide-fab:active {
+    transform: scale(0.94);
+  }
+
   .dice-arena {
     padding: 20px 10px;
     min-height: 220px;
