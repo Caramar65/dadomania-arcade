@@ -138,6 +138,65 @@ class FarkleGame {
     this.updateSelectionScorePreview();
   }
 
+  autoSelectScoringDice() {
+    if (this.isRolling || !this.hasRolledThisTurn) return;
+    if (this.gameMode === 'vs-ai' && this.activePlayer === 1) return;
+
+    // Reset current selection
+    this.selectedThisRoll = [false, false, false, false, false, false];
+
+    const availIndices = [];
+    const availVals = [];
+    this.diceAvailable.forEach((isAvail, idx) => {
+      if (isAvail && this.diceValues[idx] > 0) {
+        availIndices.push(idx);
+        availVals.push(this.diceValues[idx]);
+      }
+    });
+
+    const counts = {};
+    availVals.forEach(v => counts[v] = (counts[v] || 0) + 1);
+
+    // 1. Check straight 1-6
+    if (availVals.length === 6 && [1, 2, 3, 4, 5, 6].every(n => counts[n] === 1)) {
+      availIndices.forEach(idx => this.selectedThisRoll[idx] = true);
+    } 
+    // 2. Check 3 pairs
+    else if (availVals.length === 6 && Object.values(counts).filter(c => c === 2).length === 3) {
+      availIndices.forEach(idx => this.selectedThisRoll[idx] = true);
+    } 
+    else {
+      // 3. Select 3-of-a-kind or more
+      Object.keys(counts).forEach(numStr => {
+        const n = Number(numStr);
+        if (counts[n] >= 3) {
+          availIndices.forEach(idx => {
+            if (this.diceValues[idx] === n) this.selectedThisRoll[idx] = true;
+          });
+        }
+      });
+
+      // 4. Select remaining 1s and 5s
+      availIndices.forEach(idx => {
+        const v = this.diceValues[idx];
+        if (v === 1 || v === 5) {
+          this.selectedThisRoll[idx] = true;
+        }
+      });
+    }
+
+    const hasSelected = this.selectedThisRoll.some(Boolean);
+    if (hasSelected) {
+      window.soundEngine.playHoldClick(true);
+      window.app.showToast('✨ Se apartaron automáticamente los dados con puntos válidos', 'success');
+    } else {
+      window.app.showToast('No hay dados con puntos disponibles para apartar', 'info');
+    }
+
+    this.updateDiceVisuals();
+    this.updateSelectionScorePreview();
+  }
+
   updateSelectionScorePreview() {
     const selectedVals = [];
     this.selectedThisRoll.forEach((sel, i) => {
@@ -150,13 +209,13 @@ class FarkleGame {
     const previewEl = document.getElementById('farkle-selection-score');
     if (previewEl) {
       if (selectedVals.length === 0) {
-        previewEl.textContent = '+0 pts';
+        previewEl.innerHTML = '+0 pts <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:normal; margin-left:8px;">(Haz clic en dados con 1, 5 o tríos)</span>';
         previewEl.style.color = 'var(--text-secondary)';
       } else if (scoreResult.isValid) {
-        previewEl.textContent = `+${scoreResult.score} pts (Válido)`;
+        previewEl.innerHTML = `+${scoreResult.score} pts (Válido) <span style="font-size:0.75rem; color:var(--accent-green); font-weight:normal; margin-left:8px;">✓ ¡Puedes guardar en banco o seguir tirando!</span>`;
         previewEl.style.color = 'var(--accent-green)';
       } else {
-        previewEl.textContent = `0 pts (Combinación incompleta / no válida)`;
+        previewEl.innerHTML = `0 pts <span style="font-size:0.78rem; color:var(--accent-red); font-weight:normal; margin-left:8px;">⚠️ Los dados 2, 3, 4 y 6 no suman solos; requieren al menos 3 iguales. Solo el 1 (100 pts) y el 5 (50 pts) dan puntos individuales.</span>`;
         previewEl.style.color = 'var(--accent-red)';
       }
     }

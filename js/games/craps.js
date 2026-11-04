@@ -49,12 +49,12 @@ class CrapsGame {
     if (!board) return;
 
     const betOptions = [
-      { id: 'passLine', name: 'Línea de Pase', desc: '7 u 11 en salida gana. Punto antes del 7.', pay: '1 a 1' },
-      { id: 'dontPass', name: "Don't Pass", desc: '2 o 3 en salida gana. 7 antes del Punto.', pay: '1 a 1' },
-      { id: 'field', name: 'Field (El Campo)', desc: 'Gana en 2, 3, 4, 9, 10, 11, 12 (Tirada única)', pay: '1 a 1 (2 y 12 pagan doble)' },
-      { id: 'anySeven', name: 'Cualquier 7', desc: 'Gana si la suma es exactamente 7', pay: '4 a 1' },
-      { id: 'anyCraps', name: 'Craps (2, 3 o 12)', desc: 'Gana si sale 2, 3 o 12', pay: '7 a 1' },
-      { id: 'eleven', name: 'Yo-Eleven (11)', desc: 'Gana si la suma es exactamente 11', pay: '15 a 1' }
+      { id: 'passLine', name: 'Línea de Pase', tag: 'Principal (Multitirada)', desc: '7 u 11 en salida gana. En Fase 2: El Punto antes del 7.', pay: '1 a 1' },
+      { id: 'dontPass', name: "Don't Pass", tag: 'Inversa (Multitirada)', desc: '2 o 3 en salida gana. En Fase 2: 7 antes del Punto.', pay: '1 a 1' },
+      { id: 'field', name: 'Field (El Campo)', tag: 'Tirada Única', desc: 'Gana en 2, 3, 4, 9, 10, 11 o 12 (¡2 y 12 pagan doble 2:1!)', pay: '1 a 1 / 2 a 1' },
+      { id: 'anySeven', name: 'Cualquier 7', tag: 'Tirada Única', desc: 'Gana si la suma de los dos dados es 7', pay: '4 a 1' },
+      { id: 'anyCraps', name: 'Craps (2, 3 o 12)', tag: 'Tirada Única', desc: 'Gana si la suma es 2, 3 o 12', pay: '7 a 1' },
+      { id: 'eleven', name: 'Yo-Eleven (11)', tag: 'Tirada Única', desc: 'Gana si la suma es exactamente 11', pay: '15 a 1' }
     ];
 
     let html = '';
@@ -65,6 +65,7 @@ class CrapsGame {
              onclick="window.craps.placeBet('${opt.id}')"
              oncontextmenu="event.preventDefault(); window.craps.removeBet('${opt.id}');"
              title="Clic izquierdo para apostar • Clic derecho para retirar">
+          <span style="font-size:0.65rem; background:rgba(255,255,255,0.08); color:var(--text-secondary); padding:2px 6px; border-radius:10px; margin-bottom:4px;">${opt.tag}</span>
           <div class="bet-name">${opt.name}</div>
           <div class="bet-payout">${opt.pay}</div>
           <p style="font-size:0.7rem; color:var(--text-secondary); margin-top:4px;">${opt.desc}</p>
@@ -72,6 +73,12 @@ class CrapsGame {
         </div>
       `;
     });
+
+    html += `
+      <div style="grid-column: 1 / -1; text-align:center; font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">
+        💡 <em>Clic Izquierdo para apostar con la ficha elegida • Clic Derecho para retirar fichas de la casilla</em>
+      </div>
+    `;
 
     board.innerHTML = html;
   }
@@ -353,6 +360,33 @@ class CrapsGame {
 
     if (rollSumEl) {
       rollSumEl.textContent = this.lastRollSum ? `Suma: ${this.lastRollSum}` : '';
+    }
+
+    const liveHelperEl = document.getElementById('craps-live-helper');
+    if (liveHelperEl) {
+      if (this.point === null) {
+        liveHelperEl.innerHTML = `
+          <div class="helper-phase-header">
+            <span class="helper-phase-tag tag-off">🟡 FASE 1: SALIDA (PUCK EN OFF)</span>
+            <span style="font-size:0.75rem; color:var(--text-secondary);">Apuesta Principal: <strong>Línea de Pase</strong></span>
+          </div>
+          <p>
+            🎯 <strong>Para ganar Línea de Pase:</strong> Saca <strong>7 u 11</strong> (paga 1:1). Evita <strong>2, 3 o 12</strong> (Craps).<br>
+            Si sacas <strong>4, 5, 6, 8, 9 o 10</strong>, ese número se convertirá en <strong>EL PUNTO</strong> y pasaremos a la Fase 2.
+          </p>
+        `;
+      } else {
+        liveHelperEl.innerHTML = `
+          <div class="helper-phase-header">
+            <span class="helper-phase-tag tag-on">🟢 FASE 2: EL PUNTO ES EL ${this.point}</span>
+            <span style="font-size:0.75rem; color:var(--gold); font-weight:700;">¡Busca repetir el ${this.point}!</span>
+          </div>
+          <p>
+            🎯 <strong>Para ganar tu Línea de Pase:</strong> Debes volver a sacar un <strong>${this.point}</strong> antes del 7.<br>
+            ⚠️ <strong>Peligro:</strong> Si sacas un <strong>7 (Seven Out)</strong> antes de repetir el ${this.point}, pierdes la apuesta de Pase y volvemos a Salida.
+          </p>
+        `;
+      }
     }
   }
 }

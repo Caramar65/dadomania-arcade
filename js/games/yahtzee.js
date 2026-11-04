@@ -12,19 +12,19 @@ class YahtzeeGame {
     this.aiTimeout = null;
 
     this.categories = [
-      { id: 'ones', name: 'Ases (1)', section: 'upper' },
-      { id: 'twos', name: 'Doses (2)', section: 'upper' },
-      { id: 'threes', name: 'Treses (3)', section: 'upper' },
-      { id: 'fours', name: 'Cuatros (4)', section: 'upper' },
-      { id: 'fives', name: 'Cincos (5)', section: 'upper' },
-      { id: 'sixes', name: 'Seises (6)', section: 'upper' },
-      { id: 'threeKind', name: 'Trío (Mín. 3 iguales)', section: 'lower' },
-      { id: 'fourKind', name: 'Póker (Mín. 4 iguales)', section: 'lower' },
-      { id: 'fullHouse', name: 'Full House (3 + 2)', section: 'lower' },
-      { id: 'smallStraight', name: 'Escalera Menor (4 seguidos)', section: 'lower' },
-      { id: 'largeStraight', name: 'Escalera Mayor (5 seguidos)', section: 'lower' },
-      { id: 'yahtzee', name: '¡Generala! (5 iguales)', section: 'lower' },
-      { id: 'chance', name: 'Chance (Cualquiera)', section: 'lower' }
+      { id: 'ones', name: 'Ases (1)', desc: 'Suma de los 1s', section: 'upper' },
+      { id: 'twos', name: 'Doses (2)', desc: 'Suma de los 2s', section: 'upper' },
+      { id: 'threes', name: 'Treses (3)', desc: 'Suma de los 3s', section: 'upper' },
+      { id: 'fours', name: 'Cuatros (4)', desc: 'Suma de los 4s', section: 'upper' },
+      { id: 'fives', name: 'Cincos (5)', desc: 'Suma de los 5s', section: 'upper' },
+      { id: 'sixes', name: 'Seises (6)', desc: 'Suma de los 6s', section: 'upper' },
+      { id: 'threeKind', name: 'Trío (Mín. 3 iguales)', desc: 'Suma los 5 dados', section: 'lower' },
+      { id: 'fourKind', name: 'Póker (Mín. 4 iguales)', desc: 'Suma los 5 dados', section: 'lower' },
+      { id: 'fullHouse', name: 'Full House (3 + 2)', desc: '25 pts fijos (Trío + Pareja)', section: 'lower' },
+      { id: 'smallStraight', name: 'Escalera Menor', desc: '30 pts fijos (4 seguidos)', section: 'lower' },
+      { id: 'largeStraight', name: 'Escalera Mayor', desc: '40 pts fijos (5 seguidos)', section: 'lower' },
+      { id: 'yahtzee', name: '¡Generala! (5 iguales)', desc: '50 pts fijos (5 del mismo número)', section: 'lower' },
+      { id: 'chance', name: 'Chance (Comodín libre)', desc: 'Suma libre de los 5 dados', section: 'lower' }
     ];
 
     this.scores = [{}, {}]; // [Player1, Player2/AI]
@@ -320,7 +320,10 @@ class YahtzeeGame {
             ${isSelectable ? `onclick="window.yahtzee.selectCategory('${cat.id}')"` : ''}
             style="${isSelectable ? 'cursor:pointer; background:rgba(0, 210, 211, 0.08);' : ''}"
             title="${isSelectable ? `Haz clic para guardar +${potential} pts en ${cat.name}` : ''}">
-          <td><strong>${cat.name}</strong></td>
+          <td>
+            <strong>${cat.name}</strong>
+            <span style="display:block; font-size:0.72rem; color:var(--text-secondary); font-weight:normal; margin-top:2px;">${cat.desc}</span>
+          </td>
           <td style="text-align:right;">`;
 
       if (p1Val !== undefined) {

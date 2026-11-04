@@ -74,6 +74,50 @@
         </div>
       </div>
 
+      <!-- Interactive Quick Guide: Generala -->
+      <div class="game-guide-box" id="guide-yahtzee">
+        <div class="guide-box-header" onclick="window.app.toggleGuide('yahtzee')">
+          <div class="guide-title">
+            <span class="guide-icon">📖</span>
+            <div>
+              <strong>¿Cómo jugar Generala / Yahtzee? • Guía Rápida</strong>
+              <p class="guide-subtitle">Aprende la dinámica en 4 pasos sencillos</p>
+            </div>
+          </div>
+          <div class="guide-toggle-btn" id="guide-toggle-yahtzee">
+            <span>Ver Guía</span> ▾
+          </div>
+        </div>
+        <div class="guide-box-content">
+          <div class="guide-steps-grid">
+            <div class="guide-step-card">
+              <span class="step-badge">Paso 1</span>
+              <h5>🎲 Tirar Dados</h5>
+              <p>Presiona <strong>Lanzar Dados</strong> para comenzar tu turno con los 5 dados.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-badge">Paso 2</span>
+              <h5>📌 Guardar Dados</h5>
+              <p>Haz clic en los dados que quieras conservar (se pondrán en verde con "Guardado").</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-badge">Paso 3</span>
+              <h5>🔄 Hasta 3 Tiradas</h5>
+              <p>Vuelve a tirar los dados libres buscando completar una combinación ganadora.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-badge">Paso 4</span>
+              <h5>✍️ Anotar en Tabla</h5>
+              <p>Haz clic en una fila de la Hoja de Puntuación para fijar tus puntos y terminar turno.</p>
+            </div>
+          </div>
+          <div class="guide-callout callout-success">
+            <strong>🏆 El Secreto del Bono (+35 pts):</strong> Si la suma de las filas superiores (Ases al Seises) da <strong>63 puntos o más</strong>, ganas un súper bono de <strong>+35 puntos</strong>. Si no tienes una combinación al terminar tus 3 tiradas, puedes hacer clic en cualquier casilla libre para tacharla con 0.
+            <button class="btn-secondary" style="margin-left:12px; padding:4px 10px; font-size:0.75rem;" onclick="window.app.showRulesModal('yahtzee')">📜 Ver Manual Completo</button>
+          </div>
+        </div>
+      </div>
+
       <div class="yahtzee-layout" style="margin-top: 20px;">
         <!-- Left: Dice Arena -->
         <div>
@@ -151,6 +195,50 @@
         </div>
       </div>
 
+      <!-- Interactive Quick Guide: Farkle -->
+      <div class="game-guide-box" id="guide-farkle">
+        <div class="guide-box-header" onclick="window.app.toggleGuide('farkle')">
+          <div class="guide-title">
+            <span class="guide-icon">📖</span>
+            <div>
+              <strong>¿Cómo jugar Farkle (10.000)? • Guía Rápida</strong>
+              <p class="guide-subtitle">Aprende qué dados puntúan y cuándo plantarte</p>
+            </div>
+          </div>
+          <div class="guide-toggle-btn" id="guide-toggle-farkle">
+            <span>Ver Guía</span> ▾
+          </div>
+        </div>
+        <div class="guide-box-content">
+          <div class="guide-steps-grid">
+            <div class="guide-step-card">
+              <span class="step-badge">Paso 1</span>
+              <h5>🎲 Tirar Dados</h5>
+              <p>Lanzas los dados libres para buscar combinaciones que otorguen puntos.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-badge">Paso 2</span>
+              <h5>📌 Seleccionar Puntos</h5>
+              <p>Toca los dados que sumen puntos. <em>(¡Usa el botón de auto-apartar si dudas!)</em></p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-badge">Paso 3</span>
+              <h5>⚖️ Banco o Arriesgar</h5>
+              <p>Pulsa <strong>💰 Guardar en Banco</strong> para asegurar, o <strong>🎲 Tirar Libres</strong> para ganar más.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-badge" style="color:var(--accent-red);">Peligro</span>
+              <h5>💥 ¡Farkle!</h5>
+              <p>Si tiras dados libres y <strong>ninguno suma</strong>, pierdes todo lo acumulado en este turno.</p>
+            </div>
+          </div>
+          <div class="guide-callout callout-danger">
+            <strong>⚠️ Regla Fundamental:</strong> Solo el <strong>1 (100 pts)</strong> y el <strong>5 (50 pts)</strong> suman puntos individuales. Los dados <strong>2, 3, 4 y 6 NO puntúan solos</strong> (necesitan al menos 3 iguales como trío, escalera o 3 parejas). Si apartas los 6 dados con puntos, ¡activas <strong>Dados Calientes</strong> y vuelves a tirar los 6!
+            <button class="btn-secondary" style="margin-left:12px; padding:4px 10px; font-size:0.75rem;" onclick="window.app.showRulesModal('farkle')">📜 Ver Manual Completo</button>
+          </div>
+        </div>
+      </div>
+
       <div class="dice-arena" style="margin-top: 20px;">
         <div class="arena-watermark">FARKLE</div>
 
@@ -175,6 +263,9 @@
           </button>
           <button id="farkle-bank-btn" class="btn-secondary btn-success" disabled>
             💰 Guardar en Banco
+          </button>
+          <button id="farkle-assist-btn" class="btn-secondary" onclick="window.farkle.autoSelectScoringDice()">
+            ✨ Apartar Puntos Automático
           </button>
         </div>
       </div>
@@ -249,10 +340,66 @@
         </div>
       </div>
 
+      <!-- Interactive Quick Guide: Craps -->
+      <div class="game-guide-box" id="guide-craps">
+        <div class="guide-box-header" onclick="window.app.toggleGuide('craps')">
+          <div class="guide-title">
+            <span class="guide-icon">📖</span>
+            <div>
+              <strong>¿Cómo jugar Craps (Pase Inglés)? • Guía Rápida</strong>
+              <p class="guide-subtitle">Aprende las dos fases del casino sin complicaciones</p>
+            </div>
+          </div>
+          <div class="guide-toggle-btn" id="guide-toggle-craps">
+            <span>Ver Guía</span> ▾
+          </div>
+        </div>
+        <div class="guide-box-content">
+          <div class="guide-steps-grid">
+            <div class="guide-step-card">
+              <span class="step-badge">Paso 1</span>
+              <h5>🟡 Fase de Salida (OFF)</h5>
+              <p>Apuesta a <strong>Línea de Pase</strong>. Saca <strong>7 u 11</strong> para ganar de inmediato (1:1). 2, 3 o 12 pierden.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-badge">Paso 2</span>
+              <h5>🎯 Se Establece el Punto</h5>
+              <p>Si sale 4, 5, 6, 8, 9 o 10 en la Salida, ese número se convierte en <strong>EL PUNTO</strong> (Fase 2).</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-badge">Paso 3</span>
+              <h5>🟢 Ganar en el Punto (ON)</h5>
+              <p>Para ganar con Línea de Pase, debes <strong>sacar el Punto otra vez ANTES de que salga un 7</strong>.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-badge" style="color:var(--accent-red);">Peligro</span>
+              <h5>💥 Seven Out (7)</h5>
+              <p>Si sale un 7 mientras el Punto está activo, Línea de Pase pierde. ¡Las apuestas <strong>Field</strong> se resuelven en 1 tirada!</p>
+            </div>
+          </div>
+          <div class="guide-callout callout-info">
+            <strong>🖱️ Controles de Apuestas:</strong> Selecciona una ficha abajo ($5 a $500). Haz <strong>Clic Izquierdo</strong> en cualquier casilla del tapete para apostar y <strong>Clic Derecho</strong> para retirar fichas. Si te quedas sin saldo, pulsa <em>💵 Pedir $500</em> de cortesía.
+            <button class="btn-secondary" style="margin-left:12px; padding:4px 10px; font-size:0.75rem;" onclick="window.app.showRulesModal('craps')">📜 Ver Manual Completo</button>
+          </div>
+        </div>
+      </div>
+
       <div class="craps-table-layout" style="margin-top: 20px;">
         <!-- Felt Roll Arena -->
         <div class="dice-arena">
           <div class="arena-watermark">CRAPS</div>
+
+          <!-- Dynamic Live Assistant Banner -->
+          <div id="craps-live-helper" class="craps-live-helper">
+            <div class="helper-phase-header">
+              <span class="helper-phase-tag tag-off">🟡 FASE 1: SALIDA (PUCK EN OFF)</span>
+              <span style="font-size:0.75rem; color:var(--text-secondary);">Apuesta Principal: <strong>Línea de Pase</strong></span>
+            </div>
+            <p>
+              🎯 <strong>Para ganar Línea de Pase:</strong> Saca <strong>7 u 11</strong> (paga 1:1). Evita <strong>2, 3 o 12</strong> (Craps).<br>
+              Si sacas <strong>4, 5, 6, 8, 9 o 10</strong>, ese número se convertirá en <strong>EL PUNTO</strong> y pasaremos a la Fase 2.
+            </p>
+          </div>
 
           <div style="display:flex; align-items:center; gap:16px; margin-bottom:12px; z-index:2;">
             <div id="craps-point-puck" class="point-indicator">SALIDA (OFF)</div>
@@ -312,6 +459,50 @@
           <button class="btn-secondary" onclick="window.pig.restartGame()">
             🔄 Reiniciar
           </button>
+        </div>
+      </div>
+
+      <!-- Interactive Quick Guide: Pig -->
+      <div class="game-guide-box" id="guide-pig">
+        <div class="guide-box-header" onclick="window.app.toggleGuide('pig')">
+          <div class="guide-title">
+            <span class="guide-icon">📖</span>
+            <div>
+              <strong>¿Cómo jugar Duelo de Dados (Pig)? • Guía Rápida</strong>
+              <p class="guide-subtitle">Duelo rápido de dados a 50 o 100 puntos</p>
+            </div>
+          </div>
+          <div class="guide-toggle-btn" id="guide-toggle-pig">
+            <span>Ver Guía</span> ▾
+          </div>
+        </div>
+        <div class="guide-box-content">
+          <div class="guide-steps-grid">
+            <div class="guide-step-card">
+              <span class="step-badge">Paso 1</span>
+              <h5>🎲 Tirar el Dado</h5>
+              <p>Lanzas el dado tantas veces como te atrevas. Números del 2 al 6 se suman a tu ronda.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-badge">Paso 2</span>
+              <h5>📥 Guardar Puntos</h5>
+              <p>Pulsa <strong>Guardar y Pasar Turno</strong> para asegurar los puntos en tu marcador total.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-badge" style="color:var(--accent-red);">Peligro</span>
+              <h5>💥 Sacar un 1</h5>
+              <p>Si sacas un <strong>1</strong>, pierdes todo lo acumulado en esa ronda y pasa el turno al rival.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-badge" style="color:var(--gold);">Meta</span>
+              <h5>🏆 Ganar el Duelo</h5>
+              <p>El primero en llegar a la meta (50 o 100 pts) gana la partida inmediatamente.</p>
+            </div>
+          </div>
+          <div class="guide-callout callout-info">
+            <strong>💡 Consejo Pro:</strong> Acumula entre 15 y 20 puntos por turno antes de asegurar. Más allá de 20 puntos, la probabilidad de sacar un 1 se dispara.
+            <button class="btn-secondary" style="margin-left:12px; padding:4px 10px; font-size:0.75rem;" onclick="window.app.showRulesModal('pig')">📜 Ver Manual Completo</button>
+          </div>
         </div>
       </div>
 

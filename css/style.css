@@ -1037,9 +1037,9 @@ main {
   background: #141e30;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-lg);
-  max-width: 650px;
+  max-width: 780px;
   width: 100%;
-  max-height: 85vh;
+  max-height: 88vh;
   overflow-y: auto;
   padding: 28px;
   box-shadow: 0 25px 60px rgba(0,0,0,0.8);
@@ -1084,8 +1084,8 @@ main {
 
 .rules-body h4 {
   color: var(--accent-cyan);
-  margin: 16px 0 6px 0;
-  font-size: 1.05rem;
+  margin: 18px 0 8px 0;
+  font-size: 1.1rem;
 }
 
 .rules-body p, .rules-body li {
@@ -1096,7 +1096,282 @@ main {
 
 .rules-body ul {
   padding-left: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+/* ========================================= */
+/* IN-GAME QUICK GUIDES & EXPANDABLE PANELS  */
+/* ========================================= */
+.game-guide-box {
+  background: rgba(19, 34, 56, 0.7);
+  border: 1px solid rgba(245, 176, 65, 0.25);
+  border-radius: var(--radius-md);
+  margin-top: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.game-guide-box:hover {
+  border-color: rgba(245, 176, 65, 0.45);
+}
+
+.guide-box-header {
+  padding: 14px 18px;
+  background: rgba(11, 19, 31, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s ease;
+}
+
+.guide-box-header:hover {
+  background: rgba(11, 19, 31, 0.85);
+}
+
+.guide-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.guide-icon {
+  font-size: 1.5rem;
+}
+
+.guide-title strong {
+  font-size: 0.95rem;
+  color: var(--gold);
+}
+
+.guide-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.guide-toggle-btn {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  background: rgba(0, 210, 211, 0.1);
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.guide-box-header:hover .guide-toggle-btn {
+  background: rgba(0, 210, 211, 0.2);
+}
+
+.guide-box-content {
+  padding: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: block;
+}
+
+.game-guide-box.collapsed .guide-box-content {
+  display: none;
+}
+
+.guide-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.guide-step-card {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.guide-step-card .step-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.guide-step-card h5 {
+  font-size: 0.92rem;
+  color: #fff;
+  font-weight: 700;
+}
+
+.guide-step-card p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.guide-callout {
+  background: rgba(245, 176, 65, 0.1);
+  border-left: 4px solid var(--gold);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.83rem;
+  color: #f1f2f6;
+  margin-top: 10px;
+  line-height: 1.45;
+}
+
+.guide-callout.callout-danger {
+  background: rgba(255, 71, 87, 0.12);
+  border-left-color: var(--accent-red);
+}
+
+.guide-callout.callout-success {
+  background: rgba(46, 213, 115, 0.12);
+  border-left-color: var(--accent-green);
+}
+
+.guide-callout.callout-info {
+  background: rgba(0, 210, 211, 0.12);
+  border-left-color: var(--accent-cyan);
+}
+
+/* Craps Live Dynamic Helper */
+.craps-live-helper {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  transition: all 0.3s ease;
+}
+
+.helper-phase-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 10px;
+}
+
+.helper-phase-tag {
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.helper-phase-tag.tag-off {
+  background: rgba(245, 176, 65, 0.2);
+  color: var(--gold);
+  border: 1px solid rgba(245, 176, 65, 0.4);
+}
+
+.helper-phase-tag.tag-on {
+  background: rgba(46, 213, 115, 0.2);
+  color: var(--accent-green);
+  border: 1px solid rgba(46, 213, 115, 0.4);
+}
+
+.craps-live-helper p {
+  font-size: 0.86rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* Modal Navigation Tabs */
+.rules-modal-nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rules-nav-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.rules-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.rules-nav-btn.active {
+  background: var(--gold);
+  color: #0b131f;
+  border-color: var(--gold);
+  box-shadow: 0 0 15px var(--gold-glow);
+}
+
+.rules-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 0.85rem;
+}
+
+.rules-table th {
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--gold);
+  padding: 10px;
+  text-align: left;
+  border-bottom: 2px solid rgba(245, 176, 65, 0.3);
+}
+
+.rules-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+}
+
+.rules-table tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff;
+}
+
+.rules-faq-item {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.rules-faq-item h5 {
+  color: var(--accent-cyan);
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.rules-faq-item p {
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  line-height: 1.45;
 }
 
 /* Stats / Records Modal */
