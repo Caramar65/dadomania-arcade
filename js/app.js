@@ -128,7 +128,10 @@ class App {
     if (!box) return;
     const isCollapsed = box.classList.toggle('collapsed');
     if (toggleBtn) {
-      toggleBtn.innerHTML = isCollapsed ? '<span>Ver Guía</span> ▾' : '<span>Ocultar</span> ▴';
+      toggleBtn.innerHTML = isCollapsed ? '<span>Ver Instrucciones</span> ▾' : '<span>Ocultar</span> ▴';
+    }
+    if (!isCollapsed) {
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }
 
