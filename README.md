@@ -4,11 +4,20 @@
 
 ---
 
-## 🚀 Cómo Jugar
+## 🚀 Cómo Jugar e Instalar en Cualquier Celular (PWA)
 
-No requiere instalar nada ni usar Node.js:
-1. Haz **doble clic en el archivo [index.html](file:///c:/Users/Crispeta/Downloads/Proyectoss%20de%20antigravity/index.html)** para abrirlo directamente en tu navegador favorito (Chrome, Edge, Firefox, Opera, etc.).
-2. ¡Empieza a lanzar y a jugar de inmediato!
+### 📲 Cómo Instalar en Celular Android (Chrome, Edge, Samsung Internet):
+1. Abre el enlace del juego en el navegador de tu celular (por ejemplo tu URL de Vercel).
+2. Verás un botón dorado **"📲 Instalar App"** en la parte superior o un banner flotante en la parte inferior.
+3. Haz clic en **Instalar**.
+4. ¡Listo! Se creará el acceso directo con el icono de **DadoManía** en tu pantalla de inicio y se abrirá a pantalla completa como una aplicación nativa, funcionando incluso sin conexión a internet.
+
+### 🍏 Cómo Instalar en iPhone / iPad (Safari iOS):
+1. Abre el enlace del juego en **Safari**.
+2. Toca el botón **Compartir** 📤 (el icono del cuadrado con una flecha hacia arriba en la barra inferior de Safari).
+3. Desliza hacia abajo en las opciones y pulsa **"Agregar al inicio"** ➕ (o "Add to Home Screen").
+4. Pulsa **"Agregar"** en la esquina superior derecha.
+5. ¡Listo! Tendrás la aplicación instalada en tu iPhone lista para jugar en pantalla completa.
 
 ---
 

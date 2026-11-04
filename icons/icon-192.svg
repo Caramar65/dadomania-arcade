@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <radialGradient id="bgGrad192" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#1e3a63"/>
+      <stop offset="60%" stop-color="#0e1b2f"/>
+      <stop offset="100%" stop-color="#070c14"/>
+    </radialGradient>
+    <linearGradient id="goldGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffeaa7"/>
+      <stop offset="50%" stop-color="#f5b041"/>
+      <stop offset="100%" stop-color="#d48c18"/>
+    </linearGradient>
+    <linearGradient id="redTop192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6b81"/>
+      <stop offset="100%" stop-color="#ee5253"/>
+    </linearGradient>
+    <linearGradient id="redFront192" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ee5253"/>
+      <stop offset="100%" stop-color="#b32025"/>
+    </linearGradient>
+    <linearGradient id="redRight192" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#b32025"/>
+      <stop offset="100%" stop-color="#790d11"/>
+    </linearGradient>
+    <linearGradient id="goldTop192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff2b2"/>
+      <stop offset="100%" stop-color="#f5b041"/>
+    </linearGradient>
+    <linearGradient id="goldLeft192" x1="100%" y1="0%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#c9820f"/>
+      <stop offset="100%" stop-color="#8c5806"/>
+    </linearGradient>
+    <linearGradient id="goldFront192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5b041"/>
+      <stop offset="100%" stop-color="#a46808"/>
+    </linearGradient>
+    <filter id="shadow192" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <rect width="192" height="192" rx="42" fill="url(#bgGrad192)"/>
+  <rect width="186" height="186" x="3" y="3" rx="39" fill="none" stroke="url(#goldGrad192)" stroke-width="2.5" opacity="0.7"/>
+
+  <!-- Left Gold Die -->
+  <g transform="translate(10, 10) scale(0.4)" filter="url(#shadow192)">
+    <polygon points="175,120 245,160 175,200 105,160" fill="url(#goldTop192)"/>
+    <circle cx="175" cy="160" r="7" fill="#3d2602"/>
+    <polygon points="105,160 175,200 175,280 105,240" fill="url(#goldLeft192)"/>
+    <circle cx="140" cy="220" r="7" fill="#fff"/>
+    <polygon points="175,200 245,160 245,240 175,280" fill="url(#goldFront192)"/>
+    <circle cx="210" cy="220" r="7" fill="#3d2602"/>
+  </g>
+
+  <!-- Right Red Die -->
+  <g transform="translate(48, 8) scale(0.42)" filter="url(#shadow192)">
+    <polygon points="290,110 365,155 290,200 215,155" fill="url(#redTop192)"/>
+    <circle cx="290" cy="155" r="8" fill="#fff"/>
+    <polygon points="215,155 290,200 290,290 215,245" fill="url(#redFront192)"/>
+    <circle cx="240" cy="200" r="8" fill="#fff"/>
+    <circle cx="265" cy="245" r="8" fill="#fff"/>
+    <polygon points="290,200 365,155 365,245 290,290" fill="url(#redRight192)"/>
+    <circle cx="327" cy="222" r="14" fill="#fff"/>
+  </g>
+
+  <!-- Title Badge -->
+  <rect x="24" y="145" width="144" height="28" rx="14" fill="rgba(11, 19, 31, 0.9)" stroke="url(#goldGrad192)" stroke-width="1.5"/>
+  <text x="96" y="164" font-family="'Segoe UI', Roboto, system-ui, sans-serif" font-size="13" font-weight="900" fill="url(#goldGrad192)" text-anchor="middle" letter-spacing="2">
+    DADOMANÍA
+  </text>
+</svg>
