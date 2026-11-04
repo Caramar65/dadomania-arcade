@@ -1577,8 +1577,9 @@ main {
   color: #fff;
 }
 
-/* Mobile Floating Guide Button */
-.mobile-guide-fab {
+/* Mobile Elements (Hidden by default on PC Desktop) */
+.mobile-guide-fab,
+.arena-mobile-footer {
   display: none;
 }
 
@@ -1628,9 +1629,44 @@ main {
     font-size: 0.82rem;
   }
 
-  /* Hide bulky top instructions button on mobile to save vertical space */
-  .guide-top-btn {
+  /* Hide bulky top instructions and restart buttons on mobile to save vertical space */
+  .guide-top-btn,
+  .restart-top-btn {
     display: none !important;
+  }
+
+  /* Mobile restart button: clean pill placed right below the dice arena */
+  .arena-mobile-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 12px;
+    width: 100%;
+  }
+
+  .mobile-restart-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+  }
+
+  .mobile-restart-btn:active {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+    transform: scale(0.96);
   }
 
   /* Sleek floating action button at bottom-right on mobile (takes 0 vertical space at the top) */
