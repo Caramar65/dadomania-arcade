@@ -48,9 +48,14 @@
     </nav>
 
     <div class="nav-actions">
-      <!-- PWA Install Button -->
-      <button id="install-app-btn" class="btn-primary install-nav-btn" onclick="window.pwaManager.promptInstall()" title="Instalar App en el Celular">
-        📲 <span class="install-btn-text">Instalar App</span>
+      <!-- PWA Install / Download Button -->
+      <button id="install-app-btn" class="btn-primary install-nav-btn" onclick="window.pwaManager.promptInstall()" title="Descargar o Instalar App en PC o Celular">
+        📲 <span class="install-btn-text">Descargar App</span>
+      </button>
+
+      <!-- Share Button -->
+      <button id="share-app-btn" class="btn-secondary share-nav-btn" onclick="window.app.shareApp()" title="Compartir DadoManía con amigos">
+        📤 <span class="share-btn-text">Compartir</span>
       </button>
 
       <!-- Dice skin customizer -->

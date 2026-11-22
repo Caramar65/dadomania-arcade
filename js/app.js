@@ -118,6 +118,66 @@ class App {
     if (modalOverlay) modalOverlay.classList.remove('open');
   }
 
+  async shareApp() {
+    const shareUrl = 'https://dadomania-arcade.vercel.app/';
+    const shareData = {
+      title: 'DadoManía 3D • Arcade & Casino de Juegos de Dados',
+      text: '¡Ven a jugar a DadoManía! Juegos de dados en 3D gratis: Duelo Pig, Farkle 10.000, Generala y Craps Casino.',
+      url: shareUrl
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        this.showToast('¡Gracias por compartir DadoManía! 🎲', 'success');
+        return;
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    // Modal fallback with direct WhatsApp, Telegram, and Copy Link
+    this.showShareModal(shareUrl);
+  }
+
+  showShareModal(shareUrl = 'https://dadomania-arcade.vercel.app/') {
+    const text = encodeURIComponent('¡Ven a jugar a DadoManía! Juegos de dados en 3D gratis para celular y PC: ' + shareUrl);
+    const waUrl = `https://api.whatsapp.com/send?text=${text}`;
+    const tgUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent('¡Ven a jugar a DadoManía 3D!')}`;
+
+    this.showModal('📤 Compartir DadoManía', `
+      <div style="text-align:center; padding:10px;">
+        <div style="font-size:3.2rem; margin-bottom:10px;">🎲</div>
+        <h3 style="color:var(--gold); margin-bottom:10px;">Comparte con Amigos y Familia</h3>
+        <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:18px;">
+          Invita a tus amigos a jugar Duelo, Farkle, Generala o Craps Casino en cualquier celular o PC.
+        </p>
+
+        <div style="display:flex; flex-direction:column; gap:12px; max-width:380px; margin:0 auto 20px auto;">
+          <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="btn-primary" style="background:#25D366; border-color:#25D366; color:#fff; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:10px; padding:10px 16px; border-radius:12px; font-weight:700;">
+            💬 Compartir por WhatsApp
+          </a>
+
+          <a href="${tgUrl}" target="_blank" rel="noopener noreferrer" class="btn-primary" style="background:#0088cc; border-color:#0088cc; color:#fff; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:10px; padding:10px 16px; border-radius:12px; font-weight:700;">
+            ✈️ Compartir por Telegram
+          </a>
+
+          <div style="display:flex; gap:8px; margin-top:8px;">
+            <input type="text" readonly value="${shareUrl}" id="share-link-input" style="flex:1; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.2); border-radius:8px; padding:8px 12px; color:#fff; font-size:0.85rem;" />
+            <button class="btn-secondary" onclick="
+              const input = document.getElementById('share-link-input');
+              input.select();
+              navigator.clipboard.writeText('${shareUrl}');
+              window.app.showToast('¡Enlace copiado al portapapeles! 📋', 'success');
+            ">📋 Copiar</button>
+          </div>
+        </div>
+
+        <button class="btn-secondary" style="width:100%; max-width:380px;" onclick="window.app.closeModal()">Cerrar</button>
+      </div>
+    `);
+  }
+
   showCurrentGameRules() {
     this.showRulesModal(this.currentGame || 'pig');
   }

@@ -62,13 +62,31 @@ class PWAManager {
   }
 
   checkStandalone() {
+    const navBtn = document.getElementById('install-app-btn');
     if (this.isStandalone) {
-      this.hideInstallUI();
+      if (navBtn) {
+        navBtn.innerHTML = '📲 <span class="install-btn-text">App Instalada</span>';
+        navBtn.style.animation = 'none';
+        navBtn.style.background = 'rgba(46, 213, 115, 0.2)';
+        navBtn.style.borderColor = 'var(--accent-green)';
+        navBtn.style.color = '#fff';
+        navBtn.title = 'DadoManía ya está instalada en tu dispositivo';
+        navBtn.onclick = () => {
+          if (window.app && window.app.showToast) {
+            window.app.showToast('✅ DadoManía ya está instalada en tu pantalla.', 'success');
+          }
+        };
+      }
+      const banner = document.getElementById('pwa-install-banner');
+      if (banner) banner.style.display = 'none';
     }
   }
 
   showInstallUI() {
-    if (this.isStandalone) return;
+    if (this.isStandalone) {
+      this.checkStandalone();
+      return;
+    }
     const navBtn = document.getElementById('install-app-btn');
     if (navBtn) navBtn.style.display = 'inline-flex';
 
@@ -140,19 +158,19 @@ class PWAManager {
 
   showGenericInstallModal() {
     if (!window.app || !window.app.showModal) return;
-    window.app.showModal('📲 Instalar DadoManía en tu Celular', `
+    window.app.showModal('📲 Descargar o Instalar DadoManía', `
       <div style="text-align:center; padding:10px;">
-        <div style="font-size:3.2rem; margin-bottom:10px;">📱</div>
-        <h3 style="color:var(--gold); margin-bottom:12px;">Instala DadoManía con 1 Clic</h3>
+        <div style="font-size:3.2rem; margin-bottom:10px;">📲</div>
+        <h3 style="color:var(--gold); margin-bottom:12px;">Cómo Descargar e Instalar la App</h3>
         <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:16px;">
-          Disfruta de la app a pantalla completa, con carga ultra rápida y sin barras de navegador:
+          Disfruta de DadoManía a pantalla completa, sin barras de navegador y con acceso directo desde tu escritorio o pantalla de inicio:
         </p>
         <div style="text-align:left; background:rgba(0,0,0,0.35); padding:16px; border-radius:12px; margin-bottom:16px; font-size:0.88rem; line-height:1.65;">
-          <p>• <strong>En Celular Android (Chrome / Edge / Samsung):</strong> Pulsa el botón de los 3 puntos <strong>⋮</strong> arriba a la derecha en tu navegador y selecciona <em>"Instalar aplicación"</em> o <em>"Agregar a la pantalla principal"</em>.</p>
-          <p style="margin-top:10px;">• <strong>En iPhone (Safari):</strong> Toca el botón <strong>Compartir 📤</strong> abajo y selecciona <em>"Agregar a pantalla de inicio ➕"</em>.</p>
-          <p style="margin-top:10px;">• <strong>En Computadora:</strong> Haz clic en el icono de instalación <strong>⊕</strong> que aparece en la barra de direcciones de Chrome / Edge.</p>
+          <p>💻 <strong>En Computadora PC / Mac (Chrome / Edge / Brave):</strong> Haz clic en el icono <strong>⊕ (Instalar)</strong> que aparece en el lado derecho de la barra de direcciones web arriba, o pulsa Menú (⋮) > <em>"Instalar DadoManía..."</em>.</p>
+          <p style="margin-top:10px;">📱 <strong>En Celular Android (Chrome / Samsung):</strong> Toca los 3 puntos <strong>⋮</strong> arriba a la derecha y selecciona <em>"Instalar aplicación"</em> o <em>"Agregar a la pantalla principal"</em>.</p>
+          <p style="margin-top:10px;">🍎 <strong>En iPhone / iPad (Safari):</strong> Toca el botón <strong>Compartir 📤</strong> abajo y selecciona <em>"Agregar a pantalla de inicio ➕"</em>.</p>
         </div>
-        <button class="btn-primary" style="width:100%;" onclick="window.app.closeModal()">Entendido</button>
+        <button class="btn-primary" style="width:100%;" onclick="window.app.closeModal()">¡Entendido!</button>
       </div>
     `);
   }
