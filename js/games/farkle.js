@@ -14,6 +14,7 @@ class FarkleGame {
     this.hasRolledThisTurn = false;
     this.selectedThisRoll = [false, false, false, false, false, false];
     this.aiTimeout = null;
+    this.farkleTimeout = null;
     this.isCancelled = false;
   }
 
@@ -30,9 +31,14 @@ class FarkleGame {
       clearTimeout(this.aiTimeout);
       this.aiTimeout = null;
     }
+    if (this.farkleTimeout) {
+      clearTimeout(this.farkleTimeout);
+      this.farkleTimeout = null;
+    }
     this.resetGame();
     this.renderDiceArea();
     this.updateUI();
+    this.updateSelectionScorePreview();
     const alertBanner = document.getElementById('farkle-alert');
     if (alertBanner) alertBanner.style.display = 'none';
 
@@ -45,6 +51,10 @@ class FarkleGame {
     if (this.aiTimeout) {
       clearTimeout(this.aiTimeout);
       this.aiTimeout = null;
+    }
+    if (this.farkleTimeout) {
+      clearTimeout(this.farkleTimeout);
+      this.farkleTimeout = null;
     }
     this.totalScores = [0, 0];
     this.turnBank = 0;
@@ -97,33 +107,86 @@ class FarkleGame {
   }
 
   updateDiceVisuals() {
+    // Check scoring combinations among currently available dice
+    const availVals = [];
+    this.diceAvailable.forEach((isAvail, idx) => {
+      if (isAvail && this.diceValues[idx] > 0) {
+        availVals.push(this.diceValues[idx]);
+      }
+    });
+
+    const counts = {};
+    availVals.forEach(v => counts[v] = (counts[v] || 0) + 1);
+    const isStraight = availVals.length === 6 && [1, 2, 3, 4, 5, 6].every(n => counts[n] === 1);
+    const isThreePairs = availVals.length === 6 && Object.values(counts).filter(c => c === 2).length === 3;
+
     for (let i = 0; i < 6; i++) {
       const wrapper = document.getElementById(`farkle-die-wrapper-${i}`);
       const badge = document.getElementById(`farkle-die-badge-${i}`);
       if (!wrapper || !badge) continue;
 
-      if (this.diceValues[i] === 0) {
+      const val = this.diceValues[i];
+
+      if (val === 0) {
         wrapper.classList.remove('held');
-        wrapper.style.opacity = '0.8';
+        wrapper.style.opacity = '0.75';
         badge.textContent = 'En Cero (0)';
         badge.style.background = 'rgba(0,0,0,0.6)';
+        badge.style.border = 'none';
+        badge.style.color = 'var(--text-secondary)';
       } else if (!this.diceAvailable[i]) {
-        // Locked in from previous roll
+        // Locked in from a previous roll of this turn
         wrapper.classList.add('held');
         wrapper.style.opacity = '0.55';
-        badge.textContent = 'Anotado';
+        badge.textContent = '🔒 Guardado';
         badge.style.background = 'var(--accent-green)';
+        badge.style.border = 'none';
+        badge.style.color = '#0b131f';
       } else if (this.selectedThisRoll[i]) {
-        // Selected during current roll
+        // Selected by player on current roll
         wrapper.classList.add('held');
         wrapper.style.opacity = '1';
-        badge.textContent = 'Seleccionado';
+        badge.textContent = '✓ Apartado';
         badge.style.background = 'var(--gold)';
+        badge.style.border = 'none';
+        badge.style.color = '#0b131f';
       } else {
+        // Available to be selected on this roll
         wrapper.classList.remove('held');
         wrapper.style.opacity = '1';
-        badge.textContent = 'Para Rodar';
-        badge.style.background = 'rgba(0,0,0,0.6)';
+
+        let scoreLabel = 'Libre';
+        let isScorer = false;
+
+        if (isStraight) {
+          scoreLabel = '⭐ Escalera';
+          isScorer = true;
+        } else if (isThreePairs) {
+          scoreLabel = '⭐ Pareja';
+          isScorer = true;
+        } else if (counts[val] >= 3) {
+          scoreLabel = `⭐ Trío ${val}s`;
+          isScorer = true;
+        } else if (val === 1) {
+          scoreLabel = '⭐ +100 pts';
+          isScorer = true;
+        } else if (val === 5) {
+          scoreLabel = '⭐ +50 pts';
+          isScorer = true;
+        } else {
+          scoreLabel = 'Sin puntos';
+        }
+
+        badge.textContent = scoreLabel;
+        if (isScorer) {
+          badge.style.background = 'rgba(245, 176, 65, 0.25)';
+          badge.style.border = '1px solid var(--gold)';
+          badge.style.color = 'var(--gold)';
+        } else {
+          badge.style.background = 'rgba(0,0,0,0.6)';
+          badge.style.border = '1px solid rgba(255,255,255,0.1)';
+          badge.style.color = 'var(--text-secondary)';
+        }
       }
     }
   }
@@ -142,9 +205,6 @@ class FarkleGame {
     if (this.isRolling || !this.hasRolledThisTurn) return;
     if (this.gameMode === 'vs-ai' && this.activePlayer === 1) return;
 
-    // Reset current selection
-    this.selectedThisRoll = [false, false, false, false, false, false];
-
     const availIndices = [];
     const availVals = [];
     this.diceAvailable.forEach((isAvail, idx) => {
@@ -154,36 +214,7 @@ class FarkleGame {
       }
     });
 
-    const counts = {};
-    availVals.forEach(v => counts[v] = (counts[v] || 0) + 1);
-
-    // 1. Check straight 1-6
-    if (availVals.length === 6 && [1, 2, 3, 4, 5, 6].every(n => counts[n] === 1)) {
-      availIndices.forEach(idx => this.selectedThisRoll[idx] = true);
-    } 
-    // 2. Check 3 pairs
-    else if (availVals.length === 6 && Object.values(counts).filter(c => c === 2).length === 3) {
-      availIndices.forEach(idx => this.selectedThisRoll[idx] = true);
-    } 
-    else {
-      // 3. Select 3-of-a-kind or more
-      Object.keys(counts).forEach(numStr => {
-        const n = Number(numStr);
-        if (counts[n] >= 3) {
-          availIndices.forEach(idx => {
-            if (this.diceValues[idx] === n) this.selectedThisRoll[idx] = true;
-          });
-        }
-      });
-
-      // 4. Select remaining 1s and 5s
-      availIndices.forEach(idx => {
-        const v = this.diceValues[idx];
-        if (v === 1 || v === 5) {
-          this.selectedThisRoll[idx] = true;
-        }
-      });
-    }
+    this.selectScoringDiceLogic(availIndices, availVals);
 
     const hasSelected = this.selectedThisRoll.some(Boolean);
     if (hasSelected) {
@@ -195,6 +226,42 @@ class FarkleGame {
 
     this.updateDiceVisuals();
     this.updateSelectionScorePreview();
+  }
+
+  selectScoringDiceLogic(availIndices, availVals) {
+    this.selectedThisRoll = [false, false, false, false, false, false];
+    const counts = {};
+    availVals.forEach(v => counts[v] = (counts[v] || 0) + 1);
+
+    // 1. Check straight 1-6
+    if (availVals.length === 6 && [1, 2, 3, 4, 5, 6].every(n => counts[n] === 1)) {
+      availIndices.forEach(idx => this.selectedThisRoll[idx] = true);
+      return;
+    }
+
+    // 2. Check 3 pairs
+    if (availVals.length === 6 && Object.values(counts).filter(c => c === 2).length === 3) {
+      availIndices.forEach(idx => this.selectedThisRoll[idx] = true);
+      return;
+    }
+
+    // 3. Select 3-of-a-kind or more
+    Object.keys(counts).forEach(numStr => {
+      const n = Number(numStr);
+      if (counts[n] >= 3) {
+        availIndices.forEach(idx => {
+          if (this.diceValues[idx] === n) this.selectedThisRoll[idx] = true;
+        });
+      }
+    });
+
+    // 4. Select remaining 1s and 5s
+    availIndices.forEach(idx => {
+      const v = this.diceValues[idx];
+      if (v === 1 || v === 5) {
+        this.selectedThisRoll[idx] = true;
+      }
+    });
   }
 
   updateSelectionScorePreview() {
@@ -209,7 +276,7 @@ class FarkleGame {
     const previewEl = document.getElementById('farkle-selection-score');
     if (previewEl) {
       if (selectedVals.length === 0) {
-        previewEl.innerHTML = '+0 pts <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:normal; margin-left:8px;">(Haz clic en dados con 1, 5 o tríos)</span>';
+        previewEl.innerHTML = '+0 pts <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:normal; margin-left:8px;">(Haz clic en dados con puntos: ⭐ 1, 5 o tríos)</span>';
         previewEl.style.color = 'var(--text-secondary)';
       } else if (scoreResult.isValid) {
         previewEl.innerHTML = `+${scoreResult.score} pts (Válido) <span style="font-size:0.75rem; color:var(--accent-green); font-weight:normal; margin-left:8px;">✓ ¡Puedes guardar en banco o seguir tirando!</span>`;
@@ -230,16 +297,25 @@ class FarkleGame {
 
     const rollBtn = document.getElementById('farkle-roll-btn');
     const bankBtn = document.getElementById('farkle-bank-btn');
+    const isHumanTurn = !(this.gameMode === 'vs-ai' && this.activePlayer === 1);
 
-    const canContinue = scoreResult.isValid && scoreResult.score > 0;
-    const canBank = totalPotentialTurn > 0 && (scoreResult.isValid || selectedVals.length === 0);
+    const canContinue = !this.hasRolledThisTurn || (scoreResult.isValid && scoreResult.score > 0);
+    const canBank = totalPotentialTurn > 0 && (scoreResult.isValid || (this.turnBank > 0 && selectedVals.length === 0));
 
     if (bankBtn) {
-      bankBtn.disabled = !canBank;
+      bankBtn.disabled = !canBank || !isHumanTurn || this.isRolling;
       bankBtn.innerHTML = `💰 Guardar +${totalPotentialTurn} pts en Banco`;
     }
     if (rollBtn) {
-      rollBtn.disabled = !canContinue;
+      rollBtn.disabled = !canContinue || !isHumanTurn || this.isRolling;
+      const freeCount = this.diceAvailable.filter(Boolean).length - selectedVals.length;
+      if (!this.hasRolledThisTurn) {
+        rollBtn.innerHTML = `🎲 Tirar Dados Libres (6)`;
+      } else if (canContinue) {
+        rollBtn.innerHTML = `🎲 Tirar Dados Libres (${freeCount > 0 ? freeCount : 6})`;
+      } else {
+        rollBtn.innerHTML = `🎲 Selecciona Puntos para Tirar`;
+      }
     }
   }
 
@@ -399,26 +475,37 @@ class FarkleGame {
     if (!canScore) {
       // FARKLE!
       this.handleFarkle();
-      return;
+      return false;
     }
 
     this.updateUI();
+    this.updateSelectionScorePreview();
+    return true;
   }
 
   handleFarkle() {
     this.isRolling = true;
     window.soundEngine.playFarkleBuzzer();
-    window.app.showToast('💥 ¡FARKLE! Tirada nula, pierdes los puntos acumulados en esta ronda 💥', 'error');
+
+    const isHuman = (this.activePlayer === 0) || (this.gameMode === 'pvp');
+    const farkleMsg = isHuman
+      ? '💥 ¡FARKLE! Sin combinaciones de puntos. Pierdes los puntos acumulados en esta ronda.'
+      : '💥 ¡FARKLE DEL RIVAL! El Rival IA no sacó puntos y termina su turno.';
+    window.app.showToast(farkleMsg, 'error');
 
     const alertBanner = document.getElementById('farkle-alert');
     if (alertBanner) {
       alertBanner.style.display = 'block';
-      alertBanner.textContent = '💥 ¡FARKLE! Sin puntos en esta tirada';
-      setTimeout(() => alertBanner.style.display = 'none', 2500);
+      alertBanner.textContent = isHuman ? '💥 ¡FARKLE! Sin puntos en esta tirada' : '💥 ¡FARKLE DEL RIVAL! Sin puntos';
+      setTimeout(() => {
+        if (alertBanner) alertBanner.style.display = 'none';
+      }, 2500);
     }
 
     this.turnBank = 0;
-    setTimeout(() => {
+    if (this.farkleTimeout) clearTimeout(this.farkleTimeout);
+    this.farkleTimeout = setTimeout(() => {
+      this.isRolling = false;
       this.endTurn();
     }, 1800);
   }
@@ -465,6 +552,7 @@ class FarkleGame {
   }
 
   endTurn() {
+    this.isRolling = false;
     this.turnBank = 0;
     this.resetTurnDice();
     this.hasRolledThisTurn = false;
@@ -477,21 +565,25 @@ class FarkleGame {
 
     this.updateUI();
     this.renderDiceArea();
+    this.updateSelectionScorePreview();
 
     if (this.gameMode === 'vs-ai' && this.activePlayer === 1 && !this.isCancelled) {
+      if (this.aiTimeout) clearTimeout(this.aiTimeout);
       this.aiTimeout = setTimeout(() => this.playAITurn(), 900);
     }
   }
 
   // Farkle AI Bot with intelligent risk management
   async playAITurn() {
-    if (this.isCancelled) return;
+    if (this.isCancelled || this.activePlayer !== 1) return;
     window.app.showToast('El Rival IA está lanzando en Farkle...', 'info');
-    await this.performRoll();
+
+    let rollSuccess = await this.performRoll();
+    if (!rollSuccess || this.isCancelled || this.activePlayer !== 1) return;
 
     while (this.activePlayer === 1 && this.hasRolledThisTurn && !this.isCancelled) {
       await new Promise(r => setTimeout(r, 900));
-      if (this.isCancelled) break;
+      if (this.isCancelled || this.activePlayer !== 1) break;
 
       // AI selects all scoring dice from roll
       const availIndices = [];
@@ -499,49 +591,36 @@ class FarkleGame {
       const availVals = availIndices.map(i => this.diceValues[i]);
 
       if (!this.hasAnyScoringPossibility(availVals)) {
-        // AI already hit Farkle in performRoll
+        // Handled by performRoll -> handleFarkle
         break;
       }
 
       // Automatically select best scoring dice
-      availIndices.forEach(idx => {
-        const v = this.diceValues[idx];
-        if (v === 1 || v === 5) {
-          this.selectedThisRoll[idx] = true;
-        }
-      });
-
-      // Check if 3-of-a-kind
-      const counts = {};
-      availVals.forEach(v => counts[v] = (counts[v] || 0) + 1);
-      Object.keys(counts).forEach(numStr => {
-        const n = Number(numStr);
-        if (counts[n] >= 3) {
-          availIndices.forEach(idx => {
-            if (this.diceValues[idx] === n) this.selectedThisRoll[idx] = true;
-          });
-        }
-      });
-
+      this.selectScoringDiceLogic(availIndices, availVals);
       this.updateDiceVisuals();
       await new Promise(r => setTimeout(r, 600));
-      if (this.isCancelled) break;
+      if (this.isCancelled || this.activePlayer !== 1) break;
 
       // Commit selection
+      const newlySelected = [];
       this.selectedThisRoll.forEach((sel, i) => {
         if (sel && this.diceAvailable[i]) {
           this.diceAvailable[i] = false;
+          newlySelected.push(this.diceValues[i]);
         }
       });
 
       // Evaluate score of current selection
-      const newlySelected = availIndices.filter(i => this.selectedThisRoll[i]).map(i => this.diceValues[i]);
       const combo = this.calculateComboScore(newlySelected);
-      this.turnBank += combo.score;
+      if (combo.isValid && combo.score > 0) {
+        this.turnBank += combo.score;
+        window.soundEngine.playScoreGain();
+      }
       this.selectedThisRoll = [false, false, false, false, false, false];
 
       // If hot dice:
       if (this.diceAvailable.every(av => !av)) {
+        window.app.showToast('🔥 ¡DADOS CALIENTES DEL RIVAL! Vuelve a tirar los 6 dados 🔥', 'info');
         this.diceAvailable = [true, true, true, true, true, true];
       }
 
@@ -552,13 +631,16 @@ class FarkleGame {
       const shouldBank = (this.turnBank >= 450 && remainingDice <= 2) || (this.turnBank >= 750);
 
       if (shouldBank || (this.totalScores[1] + this.turnBank >= this.targetScore)) {
-        await new Promise(r => setTimeout(r, 700));
-        if (!this.isCancelled) this.bankScore();
+        await new Promise(r => setTimeout(r, 800));
+        if (!this.isCancelled && this.activePlayer === 1) {
+          this.bankScore();
+        }
         break;
       } else {
-        await new Promise(r => setTimeout(r, 700));
-        if (this.isCancelled) break;
-        await this.performRoll();
+        await new Promise(r => setTimeout(r, 800));
+        if (this.isCancelled || this.activePlayer !== 1) break;
+        rollSuccess = await this.performRoll();
+        if (!rollSuccess) break;
       }
     }
   }
@@ -619,7 +701,8 @@ class FarkleGame {
       rollBtn.disabled = !isHumanTurn || this.isRolling;
     }
     if (bankBtn) {
-      bankBtn.disabled = !isHumanTurn || this.isRolling || this.turnBank === 0;
+      const hasSelection = this.selectedThisRoll.some(Boolean);
+      bankBtn.disabled = !isHumanTurn || this.isRolling || (this.turnBank === 0 && !hasSelection);
       bankBtn.innerHTML = `💰 Guardar +${this.turnBank} pts en Banco`;
     }
   }
