@@ -1,7 +1,7 @@
 // Main Application Controller & Arcade Coordinator
 class App {
   constructor() {
-    this.currentGame = 'yahtzee';
+    this.currentGame = 'pig';
     this.stats = JSON.parse(localStorage.getItem('dado_stats')) || {
       gamesPlayed: 0,
       yahtzeeHigh: 0,
@@ -24,8 +24,8 @@ class App {
     if (window.craps) window.craps.init();
     if (window.pig) window.pig.init();
 
-    // Start with default game
-    this.switchGame('yahtzee');
+    // Start with default game (Duelo Pig, el más accesible)
+    this.switchGame('pig');
   }
 
   setupNavigation() {
@@ -119,7 +119,7 @@ class App {
   }
 
   showCurrentGameRules() {
-    this.showRulesModal(this.currentGame || 'yahtzee');
+    this.showRulesModal(this.currentGame || 'pig');
   }
 
   toggleGuide(gameKey) {
@@ -136,26 +136,26 @@ class App {
   }
 
   toggleCurrentGameGuide() {
-    this.toggleGuide(this.currentGame || 'yahtzee');
+    this.toggleGuide(this.currentGame || 'pig');
   }
 
-  showRulesModal(activeGame = 'yahtzee') {
+  showRulesModal(activeGame = 'pig') {
     const title = '📜 Manual Oficial & Guía de Juegos';
     
-    // Navigation Tabs inside modal
+    // Navigation Tabs inside modal (ordenados de más fácil a más avanzado)
     let body = `
       <div class="rules-modal-nav">
-        <button class="rules-nav-btn ${activeGame === 'yahtzee' ? 'active' : ''}" onclick="window.app.showRulesModal('yahtzee')">
-          🎲 Generala / Yahtzee
+        <button class="rules-nav-btn ${activeGame === 'pig' ? 'active' : ''}" onclick="window.app.showRulesModal('pig')">
+          🐷 Duelo de Dados (Pig)
         </button>
         <button class="rules-nav-btn ${activeGame === 'farkle' ? 'active' : ''}" onclick="window.app.showRulesModal('farkle')">
           🔥 Farkle (10.000)
         </button>
+        <button class="rules-nav-btn ${activeGame === 'yahtzee' ? 'active' : ''}" onclick="window.app.showRulesModal('yahtzee')">
+          🎲 Generala / Yahtzee
+        </button>
         <button class="rules-nav-btn ${activeGame === 'craps' ? 'active' : ''}" onclick="window.app.showRulesModal('craps')">
           🎰 Craps (Casino)
-        </button>
-        <button class="rules-nav-btn ${activeGame === 'pig' ? 'active' : ''}" onclick="window.app.showRulesModal('pig')">
-          🐷 Duelo de Dados (Pig)
         </button>
       </div>
       <div class="rules-body">
@@ -574,16 +574,16 @@ class App {
             <div class="label">Partidas Jugadas</div>
           </div>
           <div class="stat-tile">
-            <div class="num">${s.yahtzeeHigh}</div>
-            <div class="label">Récord Generala</div>
+            <div class="num">${s.pigWins}</div>
+            <div class="label">Victorias Duelo (Pig)</div>
           </div>
           <div class="stat-tile">
             <div class="num">${s.farkleHigh}</div>
             <div class="label">Récord Farkle</div>
           </div>
           <div class="stat-tile">
-            <div class="num">${s.pigWins}</div>
-            <div class="label">Victorias Duelo</div>
+            <div class="num">${s.yahtzeeHigh}</div>
+            <div class="label">Récord Generala</div>
           </div>
           <div class="stat-tile">
             <div class="num">$${window.craps ? window.craps.bankroll : 1000}</div>
